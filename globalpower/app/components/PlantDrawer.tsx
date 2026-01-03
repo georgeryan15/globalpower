@@ -1,6 +1,6 @@
 "use client";
 
-import { Card, CardBody, CardHeader, Button, Chip, Progress, Divider } from "@heroui/react";
+import { Button, Chip, Progress, Divider } from "@heroui/react";
 import {
   XAxis,
   YAxis,
@@ -13,10 +13,7 @@ import {
   Pie,
   Cell,
 } from "recharts";
-import {
-  type PowerPlant,
-  getPlantTypeColor,
-} from "@/app/data/placeholder";
+import { type PowerPlant, getPlantTypeColor } from "@/app/data/placeholder";
 
 interface PlantDrawerProps {
   plant: PowerPlant | null;
@@ -34,7 +31,11 @@ const plantTypeLabels: Record<PowerPlant["type"], string> = {
   oil: "Oil",
 };
 
-export default function PlantDrawer({ plant, onClose, isDarkMode = true }: PlantDrawerProps) {
+export default function PlantDrawer({
+  plant,
+  onClose,
+  isDarkMode = true,
+}: PlantDrawerProps) {
   if (!plant) return null;
 
   // Prepare hourly output data for chart
@@ -62,7 +63,9 @@ export default function PlantDrawer({ plant, onClose, isDarkMode = true }: Plant
   const bgClass = isDarkMode ? "bg-gray-900/98" : "bg-white/98";
   const textClass = isDarkMode ? "text-gray-100" : "text-gray-800";
   const mutedClass = isDarkMode ? "text-gray-400" : "text-gray-500";
-  const cardClass = isDarkMode ? "bg-gray-800/80 border-gray-700" : "bg-white border-gray-200";
+  const cardClass = isDarkMode
+    ? "bg-gray-800/80 border-gray-700"
+    : "bg-white border-gray-200";
   const dividerClass = isDarkMode ? "bg-gray-700" : "bg-gray-200";
 
   return (
@@ -76,19 +79,14 @@ export default function PlantDrawer({ plant, onClose, isDarkMode = true }: Plant
       {/* Drawer */}
       <div
         className={`
-          fixed left-0 top-0 h-full w-[400px] z-50
+          fixed left-4 top-4 bottom-4 w-[380px] z-50
           ${bgClass} backdrop-blur-md shadow-2xl
           transform transition-transform duration-300 ease-out
-          rounded-r-3xl overflow-hidden
+          rounded-2xl overflow-hidden flex flex-col
         `}
       >
         {/* Header */}
-        <div
-          className="p-5 text-white relative overflow-hidden"
-          style={{
-            background: `linear-gradient(135deg, ${getPlantTypeColor(plant.type)}, ${getPlantTypeColor(plant.type)}cc)`,
-          }}
-        >
+        <div className="p-5 text-white relative overflow-hidden bg-black/20">
           <div className="absolute top-3 right-3">
             <Button
               isIconOnly
@@ -106,7 +104,11 @@ export default function PlantDrawer({ plant, onClose, isDarkMode = true }: Plant
                 stroke="currentColor"
                 className="w-4 h-4"
               >
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M6 18L18 6M6 6l12 12"
+                />
               </svg>
             </Button>
           </div>
@@ -125,188 +127,270 @@ export default function PlantDrawer({ plant, onClose, isDarkMode = true }: Plant
             >
               {plant.status}
             </Chip>
-            <Chip size="sm" variant="flat" className="bg-white/20 text-white font-body">
+            <Chip
+              size="sm"
+              variant="flat"
+              className="bg-white/20 text-white font-body"
+            >
               {plantTypeLabels[plant.type]}
             </Chip>
           </div>
         </div>
 
         {/* Content */}
-        <div className="p-4 overflow-y-auto h-[calc(100%-140px)] space-y-3">
+        <div className="px-5 py-4 overflow-y-auto flex-1 space-y-5">
           {/* Key Stats */}
-          <Card className={`rounded-2xl shadow-sm border ${cardClass}`}>
-            <CardBody className="gap-3 p-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <p className={`font-body uppercase tracking-wide ${mutedClass}`}>Current Output</p>
-                  <p className={`font-stats text-xl ${textClass}`}>
-                    {plant.output.toLocaleString()} <span className="font-body text-sm">MW</span>
-                  </p>
-                </div>
-                <div>
-                  <p className={`font-body uppercase tracking-wide ${mutedClass}`}>Capacity</p>
-                  <p className={`font-stats text-xl ${textClass}`}>
-                    {plant.capacity.toLocaleString()} <span className="font-body text-sm">MW</span>
-                  </p>
-                </div>
-              </div>
-
+          <div>
+            <div className="grid grid-cols-2 gap-4 mb-3">
               <div>
-                <div className="flex justify-between mb-1">
-                  <span className={`font-body ${mutedClass}`}>Capacity Utilization</span>
-                  <span className={`font-stats ${textClass}`}>{utilization.toFixed(1)}%</span>
-                </div>
-                <Progress
-                  value={utilization}
-                  color={utilization > 80 ? "success" : utilization > 50 ? "primary" : "warning"}
-                  className="h-2"
-                />
+                <p
+                  className={`font-body text-xs uppercase tracking-wide ${mutedClass}`}
+                >
+                  Current Output
+                </p>
+                <p className={`font-stats text-xl ${textClass}`}>
+                  {plant.output.toLocaleString()}{" "}
+                  <span className="font-body text-sm">MW</span>
+                </p>
               </div>
-            </CardBody>
-          </Card>
+              <div>
+                <p
+                  className={`font-body text-xs uppercase tracking-wide ${mutedClass}`}
+                >
+                  Capacity
+                </p>
+                <p className={`font-stats text-xl ${textClass}`}>
+                  {plant.capacity.toLocaleString()}{" "}
+                  <span className="font-body text-sm">MW</span>
+                </p>
+              </div>
+            </div>
+
+            <div>
+              <div className="flex justify-between mb-1">
+                <span className={`font-body text-xs ${mutedClass}`}>
+                  Capacity Utilization
+                </span>
+                <span className={`font-stats text-sm ${textClass}`}>
+                  {utilization.toFixed(1)}%
+                </span>
+              </div>
+              <Progress
+                value={utilization}
+                color={
+                  utilization > 80
+                    ? "success"
+                    : utilization > 50
+                    ? "primary"
+                    : "warning"
+                }
+                className="h-2"
+              />
+            </div>
+          </div>
+
+          <Divider className={dividerClass} />
 
           {/* 24h Output Chart */}
-          <Card className={`rounded-2xl shadow-sm border ${cardClass}`}>
-            <CardHeader className="pb-0 px-4 pt-3">
-              <h3 className={`font-heading text-sm ${textClass}`}>24-Hour Output</h3>
-            </CardHeader>
-            <CardBody className="pt-2 px-4 pb-3">
-              <div className="h-[140px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={hourlyData} margin={{ top: 5, right: 5, left: -25, bottom: 0 }}>
-                    <defs>
-                      <linearGradient id="outputGradient" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor={getPlantTypeColor(plant.type)} stopOpacity={0.4} />
-                        <stop offset="95%" stopColor={getPlantTypeColor(plant.type)} stopOpacity={0} />
-                      </linearGradient>
-                    </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke={isDarkMode ? "#374151" : "#e5e7eb"} />
-                    <XAxis
-                      dataKey="hour"
-                      tick={{ fontSize: 10, fill: isDarkMode ? "#9ca3af" : "#6b7280" }}
-                      tickLine={false}
-                      interval={5}
-                      axisLine={{ stroke: isDarkMode ? "#374151" : "#e5e7eb" }}
-                    />
-                    <YAxis
-                      tick={{ fontSize: 10, fill: isDarkMode ? "#9ca3af" : "#6b7280" }}
-                      tickLine={false}
-                      axisLine={false}
-                    />
-                    <Tooltip
-                      contentStyle={{
-                        borderRadius: 12,
-                        border: "none",
-                        boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
-                        backgroundColor: isDarkMode ? "#1f2937" : "#ffffff",
-                        color: isDarkMode ? "#f3f4f6" : "#1f2937",
-                      }}
-                      formatter={(value) => [`${Number(value).toLocaleString()} MW`, "Output"]}
-                    />
-                    <Area
-                      type="monotone"
-                      dataKey="output"
-                      stroke={getPlantTypeColor(plant.type)}
-                      strokeWidth={2}
-                      fill="url(#outputGradient)"
-                    />
-                  </AreaChart>
-                </ResponsiveContainer>
-              </div>
-            </CardBody>
-          </Card>
+          <div>
+            <h3 className={`font-heading text-sm mb-3 ${textClass}`}>
+              24-Hour Output
+            </h3>
+            <div className="h-[140px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart
+                  data={hourlyData}
+                  margin={{ top: 5, right: 5, left: -25, bottom: 0 }}
+                >
+                  <defs>
+                    <linearGradient
+                      id="outputGradient"
+                      x1="0"
+                      y1="0"
+                      x2="0"
+                      y2="1"
+                    >
+                      <stop
+                        offset="5%"
+                        stopColor={getPlantTypeColor(plant.type)}
+                        stopOpacity={0.4}
+                      />
+                      <stop
+                        offset="95%"
+                        stopColor={getPlantTypeColor(plant.type)}
+                        stopOpacity={0}
+                      />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    stroke={isDarkMode ? "#374151" : "#e5e7eb"}
+                  />
+                  <XAxis
+                    dataKey="hour"
+                    tick={{
+                      fontSize: 10,
+                      fill: isDarkMode ? "#9ca3af" : "#6b7280",
+                    }}
+                    tickLine={false}
+                    interval={5}
+                    axisLine={{ stroke: isDarkMode ? "#374151" : "#e5e7eb" }}
+                  />
+                  <YAxis
+                    tick={{
+                      fontSize: 10,
+                      fill: isDarkMode ? "#9ca3af" : "#6b7280",
+                    }}
+                    tickLine={false}
+                    axisLine={false}
+                  />
+                  <Tooltip
+                    contentStyle={{
+                      borderRadius: 12,
+                      border: "none",
+                      boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+                      backgroundColor: isDarkMode ? "#1f2937" : "#ffffff",
+                      color: isDarkMode ? "#f3f4f6" : "#1f2937",
+                    }}
+                    formatter={(value) => [
+                      `${Number(value).toLocaleString()} MW`,
+                      "Output",
+                    ]}
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="output"
+                    stroke={getPlantTypeColor(plant.type)}
+                    strokeWidth={2}
+                    fill="url(#outputGradient)"
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+
+          <Divider className={dividerClass} />
 
           {/* Emissions */}
-          <Card className={`rounded-2xl shadow-sm border ${cardClass}`}>
-            <CardBody className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className={`font-body uppercase tracking-wide ${mutedClass}`}>Carbon Intensity</p>
-                  <p className={`font-stats text-xl ${textClass}`}>
-                    {plant.emissions} <span className="font-body text-sm">gCO2/kWh</span>
-                  </p>
-                </div>
-                <div
-                  className={`
-                    px-3 py-1 rounded-full font-body
-                    ${plant.emissions <= 50 ? "bg-green-500/20 text-green-400" : ""}
-                    ${plant.emissions > 50 && plant.emissions <= 200 ? "bg-lime-500/20 text-lime-400" : ""}
-                    ${plant.emissions > 200 && plant.emissions <= 500 ? "bg-yellow-500/20 text-yellow-400" : ""}
-                    ${plant.emissions > 500 ? "bg-orange-500/20 text-orange-400" : ""}
-                  `}
+          <div>
+            <div className="flex items-center justify-between">
+              <div>
+                <p
+                  className={`font-body text-xs uppercase tracking-wide ${mutedClass}`}
                 >
-                  {plant.emissions <= 50 && "Very Low"}
-                  {plant.emissions > 50 && plant.emissions <= 200 && "Low"}
-                  {plant.emissions > 200 && plant.emissions <= 500 && "Medium"}
-                  {plant.emissions > 500 && "High"}
-                </div>
+                  Carbon Intensity
+                </p>
+                <p className={`font-stats text-xl ${textClass}`}>
+                  {plant.emissions}{" "}
+                  <span className="font-body text-sm">gCO2/kWh</span>
+                </p>
               </div>
-            </CardBody>
-          </Card>
+              <div
+                className={`
+                  px-3 py-1 rounded-full font-body text-xs
+                  ${
+                    plant.emissions <= 50
+                      ? "bg-green-500/20 text-green-400"
+                      : ""
+                  }
+                  ${
+                    plant.emissions > 50 && plant.emissions <= 200
+                      ? "bg-lime-500/20 text-lime-400"
+                      : ""
+                  }
+                  ${
+                    plant.emissions > 200 && plant.emissions <= 500
+                      ? "bg-yellow-500/20 text-yellow-400"
+                      : ""
+                  }
+                  ${
+                    plant.emissions > 500
+                      ? "bg-orange-500/20 text-orange-400"
+                      : ""
+                  }
+                `}
+              >
+                {plant.emissions <= 50 && "Very Low"}
+                {plant.emissions > 50 && plant.emissions <= 200 && "Low"}
+                {plant.emissions > 200 && plant.emissions <= 500 && "Medium"}
+                {plant.emissions > 500 && "High"}
+              </div>
+            </div>
+          </div>
+
+          <Divider className={dividerClass} />
 
           {/* Capacity Pie Chart */}
-          <Card className={`rounded-2xl shadow-sm border ${cardClass}`}>
-            <CardHeader className="pb-0 px-4 pt-3">
-              <h3 className={`font-heading text-sm ${textClass}`}>Capacity Usage</h3>
-            </CardHeader>
-            <CardBody className="pt-1 px-4 pb-3">
-              <div className="h-[120px] flex items-center justify-center">
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      data={energyMixData}
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={35}
-                      outerRadius={48}
-                      paddingAngle={2}
-                      dataKey="value"
-                    >
-                      <Cell fill={getPlantTypeColor(plant.type)} />
-                      <Cell fill={isDarkMode ? "#374151" : "#e5e7eb"} />
-                    </Pie>
-                    <Tooltip
-                      contentStyle={{
-                        borderRadius: 12,
-                        border: "none",
-                        boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
-                        backgroundColor: isDarkMode ? "#1f2937" : "#ffffff",
-                        color: isDarkMode ? "#f3f4f6" : "#1f2937",
-                      }}
-                      formatter={(value) => [`${Number(value).toLocaleString()} MW`]}
-                    />
-                  </PieChart>
-                </ResponsiveContainer>
-              </div>
-            </CardBody>
-          </Card>
+          <div>
+            <h3 className={`font-heading text-sm mb-2 ${textClass}`}>
+              Capacity Usage
+            </h3>
+            <div className="h-[120px] flex items-center justify-center">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={energyMixData}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={35}
+                    outerRadius={48}
+                    paddingAngle={2}
+                    dataKey="value"
+                  >
+                    <Cell fill={getPlantTypeColor(plant.type)} />
+                    <Cell fill={isDarkMode ? "#374151" : "#e5e7eb"} />
+                  </Pie>
+                  <Tooltip
+                    contentStyle={{
+                      borderRadius: 12,
+                      border: "none",
+                      boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+                      backgroundColor: isDarkMode ? "#1f2937" : "#ffffff",
+                      color: isDarkMode ? "#f3f4f6" : "#1f2937",
+                    }}
+                    formatter={(value) => [
+                      `${Number(value).toLocaleString()} MW`,
+                    ]}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+
+          <Divider className={dividerClass} />
 
           {/* Details */}
-          <Card className={`rounded-2xl shadow-sm border ${cardClass}`}>
-            <CardHeader className="pb-0 px-4 pt-3">
-              <h3 className={`font-heading text-sm ${textClass}`}>Details</h3>
-            </CardHeader>
-            <CardBody className="pt-2 px-4 pb-4">
-              <div className="space-y-2">
-                <div className="flex justify-between">
-                  <span className={`font-body ${mutedClass}`}>Owner</span>
-                  <span className={`font-stats text-sm ${textClass}`}>{plant.owner}</span>
-                </div>
-                <Divider className={dividerClass} />
-                <div className="flex justify-between">
-                  <span className={`font-body ${mutedClass}`}>Construction Year</span>
-                  <span className={`font-stats text-sm ${textClass}`}>{plant.constructionYear}</span>
-                </div>
-                <Divider className={dividerClass} />
-                <div className="flex justify-between">
-                  <span className={`font-body ${mutedClass}`}>Location</span>
-                  <span className={`font-stats text-sm ${textClass}`}>
-                    {plant.latitude.toFixed(4)}°, {plant.longitude.toFixed(4)}°
-                  </span>
-                </div>
+          <div>
+            <h3 className={`font-heading text-sm mb-3 ${textClass}`}>
+              Details
+            </h3>
+            <div className="space-y-3">
+              <div className="flex justify-between">
+                <span className={`font-body text-sm ${mutedClass}`}>Owner</span>
+                <span className={`font-stats text-sm ${textClass}`}>
+                  {plant.owner}
+                </span>
               </div>
-            </CardBody>
-          </Card>
+              <Divider className={dividerClass} />
+              <div className="flex justify-between">
+                <span className={`font-body text-sm ${mutedClass}`}>
+                  Construction Year
+                </span>
+                <span className={`font-stats text-sm ${textClass}`}>
+                  {plant.constructionYear}
+                </span>
+              </div>
+              <Divider className={dividerClass} />
+              <div className="flex justify-between">
+                <span className={`font-body text-sm ${mutedClass}`}>
+                  Location
+                </span>
+                <span className={`font-stats text-sm ${textClass}`}>
+                  {plant.latitude.toFixed(4)}°, {plant.longitude.toFixed(4)}°
+                </span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </>
